@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ShopIQ Elite - Business Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+:root,[data-theme="dark"] {
+  --bg: #070a12;
+  --s0: #080c14;
+  --s1: #0d1220;
+  --s2: #121828;
+  --s3: #192030;
+  --s4: #1f2838;
+  --s5: #28334a;
+  --bd: rgba(255,255,255,0.055);
+  --bd2: rgba(255,255,255,0.10);
+  --bd3: rgba(255,255,255,0.16);
+  --tx: #eef0f7;
+  --tx2: #8892a8;
+  --tx3: #485268;
+  --tx4: #2e3a52;
+  --shadow: rgba(0,0,0,0.55);
+  --glass: rgba(13,18,32,0.8);
+}
+[data-theme="light"] {
+  --bg: #f0f2f8;
+  --s0: #f5f7fc;
+  --s1: #ffffff;
+  --s2: #f0f3fa;
+  --s3: #e8ecf5;
+  --s4: #dde3f0;
+  --s5: #cdd5ea;
+  --bd: rgba(0,0,0,0.07);
+  --bd2: rgba(0,0,0,0.12);
+  --bd3: rgba(0,0,0,0.18);
+  --tx: #111827;
+  --tx2: #4b5777;
+  --tx3: #8994b0;
+  --tx4: #c5ccdc;
+  --shadow: rgba(0,0,0,0.12);
+  --glass: rgba(255,255,255,0.85);
+}
+
+:root {
+  --a: #3d7ef5;   --a2: #6c63ff;
+  --ag: #10d9a0;  --ao: #ff7c3a;
+  --ar: #f5476b;  --ay: #f5c842;
+  --ap: #b06ef5;  --ac: #00c4e8;
+  --fh: 'Sora', sans-serif;
+  --fb: 'Outfit', sans-serif;
+  --fm: 'JetBrains Mono', monospace;
+  --r: 14px;
+  --rs: 9px;
+  --t: 0.2s cubic-bezier(.4,0,.2,1);
+}
+
+body {
+  margin:0; padding:0;
+  font-family: var(--fb);
+  background: var(--bg);
+  color: var(--tx);
+  min-height: 100vh;
+}
+
+.hidden { display: none !important; }
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary { background: var(--a); color: white; }
+.btn-success { background: var(--ag); color: black; }
+.btn-danger  { background: var(--ar); color: white; }
+.btn-ghost   { background: transparent; border: 1px solid var(--bd2); color: var(--tx2); }
+
+.card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: var(--r);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background: var(--s2);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+tr:nth-child(even) { background: var(--s2); }
+
+.topbar, .sidebar {
+  background: var(--s1);
+  border-bottom: 1px solid var(--bd);
+}
+
+#app { display: flex; }
+.sidebar { width: 240px; flex-shrink: 0; }
+.main { flex: 1; padding: 16px; }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .sidebar.open { display: block; position: fixed; z-index: 1000; height: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div id="auth-screen">
+  <h2 style="text-align:center; margin: 40px 0 20px;">ShopIQ Elite</h2>
+  <div style="max-width:420px; margin:0 auto; padding:24px; background:var(--s1); border-radius:12px; border:1px solid var(--bd);">
+    <div style="margin-bottom:20px;">
+      <button class="btn" onclick="document.getElementById('login-form').style.display='block'; document.getElementById('reg-form').style.display='none';">Login</button>
+      <button class="btn" onclick="document.getElementById('reg-form').style.display='block'; document.getElementById('login-form').style.display='none';">Register</button>
+    </div>
+
+    <div id="login-form">
+      <input class="fi" id="l-id" placeholder="Email or Phone" style="width:100%; margin:8px 0; padding:10px;" /><br/>
+      <input class="fi" id="l-pw" type="password" placeholder="Password" style="width:100%; margin:8px 0; padding:10px;" /><br/>
+      <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">Login</button>
+      <div style="margin-top:12px; text-align:center;">
+        <a href="#" onclick="demoLogin()">Use Demo Account</a>
+      </div>
+    </div>
+
+    <div id="reg-form" style="display:none;">
+      <input class="fi" id="r-nm" placeholder="Full Name" style="width:100%; margin:8px 0; padding:10px;" /><br/>
+      <input class="fi" id="r-em" placeholder="Email" style="width:100%; margin:8px 0; padding:10px;" /><br/>
+      <input class="fi" id="r-ph" placeholder="Phone" style="width:100%; margin:8px 0; padding:10px;" /><br/>
+      <input class="fi" id="r-pw" type="password" placeholder="Password" style="width:100%; margin:8px 0; padding:10px;" /><br/>
+      <button class="btn btn-success" style="width:100%;" onclick="doRegister()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="hidden" style="display:none;">
+  <nav class="sidebar">
+    <div style="padding:16px;">
+      <h3>ShopIQ <small id="sb-cat"></small></h3>
+      <button onclick="nav('dashboard')">Dashboard</button><br/>
+      <button onclick="nav('pos')">Point of Sale</button><br/>
+      <button onclick="nav('inventory')">Inventory</button><br/>
+      <button onclick="nav('customers')">Customers</button><br/>
+      <button onclick="nav('settings')">Settings</button><br/>
+      <button class="btn btn-danger" onclick="doLogout()" style="margin-top:40px;">Logout</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar" style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+      <button onclick="document.querySelector('.sidebar').classList.toggle('open')">☰ Menu</button>
+      <div id="tb-title">Dashboard</div>
+      <div>
+        <button onclick="toggleTheme()">Toggle Theme</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Dashboard -->
+      <div id="page-dashboard" class="page">
+        <h1>Welcome, <span id="dash-name"></span></h1>
+        <div id="dash-stats"></div>
+      </div>
+
+      <!-- POS -->
+      <div id="page-pos" class="page hidden">
+        <h2>Point of Sale</h2>
+        <div>
+          <input id="pos-q" placeholder="Search product..." oninput="filterPos()" style="width:300px; padding:8px;"/>
+        </div>
+        <div id="pos-prods" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); gap:12px; margin-top:16px;"></div>
+        <div id="cart-items-el" style="margin-top:24px; min-height:200px; border:1px dashed var(--bd); padding:16px;">
+          Cart is empty
+        </div>
+        <div style="margin-top:16px;">
+          <button class="btn btn-success" onclick="processSale()">Process Sale</button>
+          <button class="btn btn-ghost" onclick="clearCart()">Clear Cart</button>
+        </div>
+      </div>
+
+      <!-- Inventory -->
+      <div id="page-inventory" class="page hidden">
+        <h2>Inventory</h2>
+        <button class="btn btn-primary" onclick="openModal('add-product-modal')">+ Add Product</button>
+        <button class="btn btn-danger" onclick="bulkDeleteInventory()">🗑 Bulk Delete Selected</button>
+
+        <div style="margin:16px 0;">
+          <input id="inv-q" placeholder="Search..." oninput="renderInventory()" style="padding:8px; width:220px;"/>
+        </div>
+
+        <div class="card">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" onclick="toggleAllCheckboxes(this)"/></th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Stock</th>
+                <th>Buy</th>
+                <th>Sell</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="inv-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Customers -->
+      <div id="page-customers" class="page hidden">
+        <h2>Customers</h2>
+        <button class="btn btn-primary" onclick="openModal('add-customer-modal')">+ Add Customer</button>
+        <button class="btn btn-ghost" onclick="uploadCustomersCSV()">📤 Import CSV</button>
+
+        <div class="card" style="margin-top:16px;">
+          <table>
+            <thead>
+              <tr><th>Name</th><th>Phone</th><th>City</th><th>Balance</th></tr>
+            </thead>
+            <tbody id="cust-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div id="page-settings" class="page hidden">
+        <h2>Settings</h2>
+        <div class="card">
+          <label>Store Name</label><br/>
+          <input id="s-nm" style="width:100%; padding:8px; margin:8px 0;"/><br/>
+
+          <label>Currency Symbol</label><br/>
+          <input id="s-cur" value="₹" style="width:100%; padding:8px; margin:8px 0;"/><br/>
+
+          <button class="btn btn-success" onclick="saveSettings()">Save Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Modals ─── -->
+<div id="modal-bg" class="modal-bg hidden" onclick="if(event.target===this) closeModal()">
+
+  <!-- Add Product Modal -->
+  <div class="modal" id="add-product-modal" style="max-width:600px;">
+    <h3>Add Product</h3>
+    <div style="display:grid; gap:12px;">
+      <input id="np-nm" placeholder="Product Name" />
+      <input id="np-cat" placeholder="Category" />
+      <input id="np-buy" type="number" placeholder="Buy Price" />
+      <input id="np-sell" type="number" placeholder="Sell Price" />
+      <input id="np-stock" type="number" placeholder="Stock" value="0" />
+      <textarea id="np-desc" placeholder="Description"></textarea>
+      <div style="display:flex; gap:12px; justify-content:flex-end;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="addProduct()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Customer Modal -->
+  <div class="modal" id="add-customer-modal" style="max-width:500px;">
+    <h3>Add Customer</h3>
+    <div style="display:grid; gap:12px;">
+      <input id="nc-nm" placeholder="Name" />
+      <input id="nc-ph" placeholder="Phone" />
+      <input id="nc-cy" placeholder="City" />
+      <input id="nc-bal" type="number" placeholder="Opening Balance" value="0" />
+      <div style="display:flex; gap:12px; justify-content:flex-end;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="addCustomer()">Add</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+// Helpers
+// ──────────────────────────────────────────────
+
+const $ = id => document.getElementById(id);
+const v  = id => $(id)?.value || '';
+const show = id => ($(id)||{}).classList?.remove('hidden');
+const hide = id => ($(id)||{}).classList?.add('hidden');
+
+function toast(msg, type='info') {
+  const div = document.createElement('div');
+  div.textContent = msg;
+  div.style.cssText = `
+    position:fixed; bottom:20px; right:20px; padding:12px 20px; border-radius:8px; z-index:9999;
+    background:${type==='error'?'#f5476b':type==='success'?'#10d9a0':'#3d7ef5'}; color:white;
+  `;
+  document.body.appendChild(div);
+  setTimeout(()=>div.remove(), 3000);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+function applyTheme() {
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+}
+
+// ──────────────────────────────────────────────
+// State
+// ──────────────────────────────────────────────
+
+let S = {
+  user: null,
+  store: null,
+  prods: [],
+  sales: [],
+  custs: [],
+  cart: [],
+  cfg: { cur:'₹', taxRate:18, lowStock:10, theme:'dark' }
+};
+
+function save() {
+  if (!S.user) return;
+  localStorage.setItem('shopiq_prods_' + S.user.uid, JSON.stringify(S.prods));
+  localStorage.setItem('shopiq_custs_' + S.user.uid, JSON.stringify(S.custs));
+  localStorage.setItem('shopiq_cfg_'  + S.user.uid, JSON.stringify(S.cfg));
+}
+
+function loadUserData() {
+  if (!S.user?.uid) return;
+  S.prods = JSON.parse(localStorage.getItem('shopiq_prods_' + S.user.uid) || '[]');
+  S.custs = JSON.parse(localStorage.getItem('shopiq_custs_' + S.user.uid) || '[]');
+  S.cfg   = JSON.parse(localStorage.getItem('shopiq_cfg_'  + S.user.uid) || '{}');
+}
+
+// ──────────────────────────────────────────────
+// Auth
+// ──────────────────────────────────────────────
+
+function doLogin() {
+  const id = v('l-id').trim();
+  const pw = v('l-pw');
+  if (!id || !pw) return toast("Fill both fields", 'error');
+
+  // Very simple demo check
+  if (id === "demo@shopiq.com" && pw === "demo123") {
+    S.user = { uid: "demo1", name: "Demo User" };
+    loadUserData();
+    afterLogin();
+  } else {
+    toast("Invalid credentials", 'error');
+  }
+}
+
+function demoLogin() {
+  document.getElementById('l-id').value = "demo@shopiq.com";
+  document.getElementById('l-pw').value = "demo123";
+  doLogin();
+}
+
+function doRegister() {
+  const nm = v('r-nm').trim();
+  const em = v('r-em').trim();
+  const ph = v('r-ph').trim();
+  const pw = v('r-pw');
+
+  if (!nm || !em || !ph || !pw) return toast("All fields required", 'error');
+
+  S.user = { uid: "u_" + Date.now(), name: nm };
+  loadUserData(); // will be empty at first
+  afterLogin();
+}
+
+function afterLogin() {
+  hide('auth-screen');
+  show('app');
+  $('dash-name').textContent = S.user.name;
+  $('sb-cat').textContent = "Demo Store";
+  renderInventory();
+  renderCustomers();
+  nav('dashboard');
+}
+
+// ──────────────────────────────────────────────
+// Navigation
+// ──────────────────────────────────────────────
+
+function nav(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  const target = $('page-' + page);
+  if (target) target.classList.remove('hidden');
+  $('tb-title').textContent = page.charAt(0).toUpperCase() + page.slice(1);
+}
+
+// ──────────────────────────────────────────────
+// Inventory
+// ──────────────────────────────────────────────
+
+function renderInventory() {
+  const q = (v('inv-q') || '').toLowerCase();
+  const filtered = S.prods.filter(p => 
+    p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q)
+  );
+
+  let html = '';
+  filtered.forEach(p => {
+    html += `
+      <tr>
+        <td><input type="checkbox" class="bulk-check" data-id="${p.id}"></td>
+        <td>${p.name}</td>
+        <td>${p.cat || '-'}</td>
+        <td>${p.stock || 0}</td>
+        <td>${S.cfg.cur}${p.buy || 0}</td>
+        <td>${S.cfg.cur}${p.sell || 0}</td>
+        <td><button class="btn btn-ghost btn-xs">Edit</button></td>
+      </tr>`;
+  });
+
+  $('inv-tbody').innerHTML = html || '<tr><td colspan="7" style="text-align:center;padding:40px;">No products yet</td></tr>';
+}
+
+function addProduct() {
+  const name  = v('np-nm').trim();
+  const cat   = v('np-cat').trim() || 'General';
+  const buy   = Number(v('np-buy')) || 0;
+  const sell  = Number(v('np-sell')) || 0;
+  const stock = Number(v('np-stock')) || 0;
+
+  if (!name) return toast("Product name required", 'error');
+
+  const prod = {
+    id: 'P' + Date.now().toString(36).slice(-6).toUpperCase(),
+    name, cat, buy, sell, stock,
+    createdAt: new Date().toISOString().slice(0,10)
+  };
+
+  S.prods.push(prod);
+  save();
+  closeModal();
+  renderInventory();
+  toast("Product added", 'success');
+}
+
+function bulkDeleteInventory() {
+  const checked = [...document.querySelectorAll('.bulk-check:checked')];
+  if (!checked.length) return toast("No items selected", 'error');
+
+  if (!confirm(`Delete ${checked.length} product(s)?`)) return;
+
+  const ids = checked.map(ch => ch.dataset.id);
+  S.prods = S.prods.filter(p => !ids.includes(p.id));
+  save();
+  renderInventory();
+  toast(`Deleted ${ids.length} products`, 'success');
+}
+
+function toggleAllCheckboxes(el) {
+  document.querySelectorAll('.bulk-check').forEach(ch => ch.checked = el.checked);
+}
+
+// ──────────────────────────────────────────────
+// Customers
+// ──────────────────────────────────────────────
+
+function renderCustomers() {
+  let html = '';
+  S.custs.forEach(c => {
+    html += `
+      <tr>
+        <td>${c.name}</td>
+        <td>${c.phone || '-'}</td>
+        <td>${c.city || '-'}</td>
+        <td>${S.cfg.cur}${(c.balance||0).toFixed(2)}</td>
+      </tr>`;
+  });
+
+  $('cust-tbody').innerHTML = html || '<tr><td colspan="4" style="text-align:center;padding:40px;">No customers yet</td></tr>';
+}
+
+function addCustomer() {
+  const name = v('nc-nm').trim();
+  const phone = v('nc-ph').trim();
+  if (!name || !phone) return toast("Name & phone required", 'error');
+
+  const cust = {
+    id: 'C' + Date.now().toString(36).slice(-6).toUpperCase(),
+    name, phone,
+    city: v('nc-cy'),
+    balance: Number(v('nc-bal')) || 0
+  };
+
+  S.custs.push(cust);
+  save();
+  closeModal();
+  renderCustomers();
+  toast("Customer added", 'success');
+}
+
+function uploadCustomersCSV() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.csv';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const lines = ev.target.result.trim().split('\n');
+      let count = 0;
+      for (let i = 1; i < lines.length; i++) {
+        const [name, phone, city, balance] = lines[i].split(',').map(s=>s.trim());
+        if (!name || !phone) continue;
+        S.custs.push({
+          id: 'C' + Date.now().toString(36).slice(-6).toUpperCase() + count,
+          name, phone, city: city||'', balance: Number(balance)||0
+        });
+        count++;
+      }
+      save();
+      renderCustomers();
+      toast(`Imported ${count} customers`, 'success');
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ──────────────────────────────────────────────
+// POS - very basic version
+// ──────────────────────────────────────────────
+
+function filterPos() {
+  const q = (v('pos-q') || '').toLowerCase();
+  const filtered = S.prods.filter(p => p.name.toLowerCase().includes(q));
+
+  let html = '';
+  filtered.forEach(p => {
+    html += `
+      <div class="card" style="padding:12px; cursor:pointer;" onclick="addToCart('${p.id}')">
+        <strong>${p.name}</strong><br/>
+        ${S.cfg.cur}${p.sell} • Stock: ${p.stock}
+      </div>`;
+  });
+
+  $('pos-prods').innerHTML = html || '<div style="grid-column:1/-1; text-align:center; padding:40px;">No products found</div>';
+}
+
+function addToCart(id) {
+  const p = S.prods.find(x => x.id === id);
+  if (!p) return;
+  if (p.stock < 1) return toast("Out of stock", 'error');
+
+  const item = S.cart.find(c => c.id === id);
+  if (item) item.qty++;
+  else S.cart.push({ ...p, qty: 1 });
+
+  renderCart();
+  toast(`Added ${p.name}`, 'success');
+}
+
+function renderCart() {
+  if (S.cart.length === 0) {
+    $('cart-items-el').innerHTML = 'Cart is empty';
+    return;
+  }
+
+  let html = '<table style="width:100%;"><tr><th>Item</th><th>Qty</th><th>Price</th></tr>';
+  S.cart.forEach(item => {
+    html += `<tr>
+      <td>${item.name}</td>
+      <td>${item.qty}</td>
+      <td>${S.cfg.cur}${(item.sell * item.qty).toFixed(2)}</td>
+    </tr>`;
+  });
+  html += '</table>';
+  $('cart-items-el').innerHTML = html;
+}
+
+function clearCart() {
+  S.cart = [];
+  renderCart();
+}
+
+function processSale() {
+  if (!S.cart.length) return toast("Cart is empty", 'error');
+
+  const total = S.cart.reduce((sum, c) => sum + c.sell * c.qty, 0);
+
+  S.sales.push({
+    id: 'INV-' + Date.now().toString(36).slice(-6).toUpperCase(),
+    date: new Date().toISOString().slice(0,10),
+    total,
+    items: S.cart.map(c => ({id:c.id, qty:c.qty}))
+  });
+
+  S.cart.forEach(c => {
+    const prod = S.prods.find(p => p.id === c.id);
+    if (prod) prod.stock = Math.max(0, prod.stock - c.qty);
+  });
+
+  save();
+  clearCart();
+  toast(`Sale completed - ₹${total.toFixed(2)}`, 'success');
+}
+
+// ──────────────────────────────────────────────
+// Settings
+// ──────────────────────────────────────────────
+
+function saveSettings() {
+  S.cfg.storeName = v('s-nm') || 'My Store';
+  S.cfg.cur = v('s-cur') || '₹';
+  save();
+  toast("Settings saved", 'success');
+}
+
+// ──────────────────────────────────────────────
+// Modal control
+// ──────────────────────────────────────────────
+
+function openModal(id) {
+  show('modal-bg');
+  show(id);
+}
+
+function closeModal() {
+  hide('modal-bg');
+  document.querySelectorAll('.modal').forEach(m => hide(m.id));
+}
+
+// ──────────────────────────────────────────────
+// Boot
+// ──────────────────────────────────────────────
+
+(function boot() {
+  applyTheme();
+
+  // Check if already logged in (demo persistence)
+  if (localStorage.getItem('shopiq_logged_in') === 'true') {
+    S.user = { uid: "demo1", name: "Demo User" };
+    loadUserData();
+    afterLogin();
+  }
+})();
+</script>
+</body>
+</html>
