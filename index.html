@@ -1,237 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
+\<!DOCTYPE html>
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KlubFox Dashboard</title>
-
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
-
+<title>ShopIQ POS</title>
 <style>
-
-/* ===== GLOBAL RESET ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* ===== THEME ===== */
-:root {
-  --bg-primary: #0B0F14;
-  --bg-secondary: #11161D;
-  --card-bg: #151B23;
-
-  --accent: #4F8CFF;
-  --accent-hover: #6EA8FF;
-
-  --text-primary: #E6EDF3;
-  --text-secondary: #9BA6B2;
-  --border: #222B36;
-}
-
-/* ===== BODY ===== */
-body {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  display: flex;
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar {
-  width: 240px;
-  height: 100vh;
-  background: var(--bg-secondary);
-  padding: 20px;
-  border-right: 1px solid var(--border);
-}
-
-.sidebar h2 {
-  margin-bottom: 30px;
-}
-
-.sidebar a {
-  display: block;
-  padding: 10px;
-  margin: 8px 0;
-  color: var(--text-secondary);
-  text-decoration: none;
-  border-radius: 8px;
-}
-
-.sidebar a:hover {
-  background: var(--card-bg);
-  color: var(--text-primary);
-}
-
-/* ===== MAIN ===== */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ===== NAVBAR ===== */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 16px 24px;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border);
-}
-
-.navbar .title {
-  font-weight: 600;
-}
-
-.btn-primary {
-  background: var(--accent);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  background: var(--accent-hover);
-}
-
-/* ===== DASHBOARD ===== */
-.dashboard {
-  padding: 24px;
-}
-
-/* ===== GRID ===== */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-/* ===== CARD ===== */
-.card {
-  background: var(--card-bg);
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  transition: 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-}
-
-.card h3 {
-  color: var(--text-secondary);
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.card .value {
-  font-size: 22px;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-/* ===== TABLE (Optional Data UI) ===== */
-.table {
-  margin-top: 30px;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th, .table td {
-  padding: 12px;
-  border-bottom: 1px solid var(--border);
-  text-align: left;
-}
-
-.table th {
-  color: var(--text-secondary);
-}
-
+body { font-family: Arial; background:#0b1220; color:white; padding:20px; }
+button { padding:10px; margin:5px; }
 </style>
 </head>
-
 <body>
 
-<!-- ===== SIDEBAR ===== -->
-<div class="sidebar">
-  <h2>KlubFox</h2>
-  <a href="#">Dashboard</a>
-  <a href="#">Markets</a>
-  <a href="#">Portfolio</a>
-  <a href="#">Analytics</a>
-  <a href="#">Settings</a>
-</div>
+<h2>ShopIQ POS</h2>
 
-<!-- ===== MAIN ===== -->
-<div class="main">
+<button onclick="newSale()">+ New Sale</button>
 
-  <!-- NAVBAR -->
-  <div class="navbar">
-    <div class="title">Dashboard</div>
-    <button class="btn-primary">Upgrade</button>
-  </div>
+<table border="1" width="100%" id="table">
+<tr><th>Customer</th><th>Amount</th></tr>
+</table>
 
-  <!-- DASHBOARD -->
-  <div class="dashboard">
+<script>
 
-    <!-- CARDS -->
-    <div class="grid">
-      <div class="card">
-        <h3>Portfolio Value</h3>
-        <div class="value">$12,430</div>
-      </div>
+/* LOAD DATA */
+function loadSales() {
+  const data = JSON.parse(localStorage.getItem("sales")) || [];
 
-      <div class="card">
-        <h3>Today's Profit</h3>
-        <div class="value" style="color:#22C55E;">+$320</div>
-      </div>
+  let table = document.getElementById("table");
+  table.innerHTML = "<tr><th>Customer</th><th>Amount</th></tr>";
 
-      <div class="card">
-        <h3>Active Trades</h3>
-        <div class="value">8</div>
-      </div>
+  data.forEach(s => {
+    table.innerHTML += `<tr><td>${s.customer}</td><td>₹${s.amount}</td></tr>`;
+  });
+}
 
-      <div class="card">
-        <h3>Win Rate</h3>
-        <div class="value">72%</div>
-      </div>
-    </div>
+/* ADD SALE */
+function newSale() {
+  let customer = prompt("Customer:");
+  let amount = prompt("Amount:");
 
-    <!-- TABLE -->
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Asset</th>
-          <th>Price</th>
-          <th>Change</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>BTC</td>
-          <td>$43,200</td>
-          <td style="color:#22C55E;">+2.4%</td>
-        </tr>
-        <tr>
-          <td>ETH</td>
-          <td>$3,200</td>
-          <td style="color:#EF4444;">-1.2%</td>
-        </tr>
-        <tr>
-          <td>AAPL</td>
-          <td>$189</td>
-          <td style="color:#22C55E;">+0.8%</td>
-        </tr>
-      </tbody>
-    </table>
+  let data = JSON.parse(localStorage.getItem("sales")) || [];
+  data.push({ customer, amount });
 
-  </div>
-</div>
+  localStorage.setItem("sales", JSON.stringify(data));
+
+  loadSales();
+}
+
+/* INIT */
+loadSales();
+
+</script>
 
 </body>
 </html>
