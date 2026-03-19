@@ -1,53 +1,48 @@
-\<!DOCTYPE html>
-<html>
-<head>
-<title>ShopIQ POS</title>
-<style>
-body { font-family: Arial; background:#0b1220; color:white; padding:20px; }
-button { padding:10px; margin:5px; }
-</style>
-</head>
-<body>
-
-<h2>ShopIQ POS</h2>
-
-<button onclick="newSale()">+ New Sale</button>
-
-<table border="1" width="100%" id="table">
-<tr><th>Customer</th><th>Amount</th></tr>
-</table>
-
 <script>
 
-/* LOAD DATA */
-function loadSales() {
-  const data = JSON.parse(localStorage.getItem("sales")) || [];
+const API = "http://localhost:5000";
 
-  let table = document.getElementById("table");
-  table.innerHTML = "<tr><th>Customer</th><th>Amount</th></tr>";
+/* ===== NEW SALE ===== */
+async function newSale() {
+  const customer = prompt("Customer Name:");
+  const amount = prompt("Amount:");
 
-  data.forEach(s => {
-    table.innerHTML += `<tr><td>${s.customer}</td><td>₹${s.amount}</td></tr>`;
+  if (!customer || !amount) return;
+
+  await fetch(API + "/api/sale", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ customer, amount })
   });
-}
 
-/* ADD SALE */
-function newSale() {
-  let customer = prompt("Customer:");
-  let amount = prompt("Amount:");
-
-  let data = JSON.parse(localStorage.getItem("sales")) || [];
-  data.push({ customer, amount });
-
-  localStorage.setItem("sales", JSON.stringify(data));
-
+  alert("Sale Added!");
   loadSales();
 }
 
-/* INIT */
+/* ===== LOAD SALES ===== */
+async function loadSales() {
+  const res = await fetch(API + "/api/sales");
+  const data = await res.json();
+
+  const table = document.querySelector(".table");
+  table.innerHTML = `
+    <tr>
+      <th>Customer</th>
+      <th>Amount</th>
+    </tr>
+  `;
+
+  data.forEach(s => {
+    table.innerHTML += `
+      <tr>
+        <td>${s.customer}</td>
+        <td>₹${s.amount}</td>
+      </tr>
+    `;
+  });
+}
+
+/* ===== INIT ===== */
 loadSales();
 
 </script>
-
-</body>
-</html>
